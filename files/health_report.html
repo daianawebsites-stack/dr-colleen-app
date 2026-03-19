@@ -1,1 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #ffffff;
+    --bgLight: #f9f9fc;
+    --warmTint: #f2f0fc;
+    --textPrimary: #000000;
+    --textSecondary: #000000;
+    --textTertiary: #6b6b8a;
+    --textMuted: #8a8aa0;
+    --textOnTint: #3d3d5c;
+    --lavender100: #F2F0FC;
+    --lavender200: #DFD6FF;
+    --lavender300: #A089EF;
+    --purple100: #614ea8;
+    --purple200: #372f71;
+    --purpleDeep: #21115c;
+    --grey100: #efefef;
+    --grey300: #d9d9d9;
+    --amber: #E8842A;
+    --rose: #E5486D;
+    --blue: #778BF9;
+    --green: #6EBC61;
+    --radius: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--bgLight);
+    color: var(--textPrimary);
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 40px 24px 60px; }
 
+  /* ── Action bar ── */
+  .action-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px; font-weight: 600;
+    padding: 9px 20px;
+    border-radius: var(--radius);
+    background: var(--purple100);
+    color: var(--white);
+    border: 2px solid var(--lavender200);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: var(--purpleDeep); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px; font-weight: 600;
+    padding: 9px 20px;
+    border-radius: var(--radius);
+    background: var(--white);
+    color: var(--purple100);
+    border: 2px solid var(--purple100);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: var(--lavender100); }
+
+  /* ── Page header ── */
+  .page-header { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+  .page-header h1 { font-size: 28px; font-weight: 700; line-height: 36px; color: var(--purpleDeep); }
+
+  /* ── Profile card ── */
+  .profile-card {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 28px 28px 24px;
+    margin-bottom: 16px; border: 1.5px solid var(--grey100);
+  }
+  .profile-top { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+  .avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: var(--lavender200); display: flex; align-items: center;
+    justify-content: center; color: var(--purple200); flex-shrink: 0;
+  }
+  .profile-name { font-size: 20px; font-weight: 700; color: var(--purpleDeep); }
+  .profile-sub { font-size: 12px; font-weight: 500; color: var(--textTertiary); margin-top: 3px; }
+  .pgrid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--grey100);
+    border-radius: var(--radius); overflow: hidden; border: 1px solid var(--grey100);
+  }
+  .pstat { background: var(--white); padding: 14px 16px; }
+  .pstat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--textMuted); margin-bottom: 5px; }
+  .pstat-value { font-size: 13px; font-weight: 600; color: var(--textPrimary); }
+
+  /* ── Module ── */
+  .module {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); margin-bottom: 16px;
+    border: 1.5px solid var(--grey100); overflow: hidden;
+  }
+  .mod-header { display: flex; align-items: center; gap: 10px; padding: 16px 20px; }
+  .mod-icon { color: var(--purple100); flex-shrink: 0; }
+  .mod-title { font-size: 16px; font-weight: 700; color: var(--textPrimary); flex: 1; }
+  .mod-divider { height: 1px; background: var(--grey100); margin: 0 20px; }
+  .mod-body { padding: 20px 24px 24px; }
+
+  /* ── Info rows ── */
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--grey100); gap: 16px; }
+  .info-row:last-child { border-bottom: none; }
+  .ir-label { font-size: 12px; font-weight: 700; color: var(--textMuted); text-transform: uppercase; letter-spacing: 0.06em; min-width: 170px; }
+  .ir-value { font-size: 14px; font-weight: 500; color: var(--textPrimary); text-align: right; }
+
+  /* ── Tags ── */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { font-size: 12px; font-weight: 700; padding: 6px 14px; border-radius: var(--radius); background: var(--lavender100); color: var(--purple200); border: 1px solid var(--lavender200); }
+  .tag-green { background: #f0faf0; color: #2c6e25; border-color: #a8dca2; }
+  .tag-amber { background: #fff5ec; color: #7a4010; border-color: #f5c99a; }
+  .tag-rose  { background: #fff0f3; color: #8f1f37; border-color: #f5a3b5; }
+
+  /* ── Symptoms ── */
+  .sym-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--grey100); }
+  .sym-row:last-child { border-bottom: none; }
+  .sym-name { font-size: 14px; font-weight: 500; color: var(--textPrimary); min-width: 140px; }
+  .bar-track { flex: 1; height: 6px; background: var(--grey100); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .sym-score { font-size: 12px; font-weight: 700; color: var(--textTertiary); min-width: 80px; text-align: right; }
+
+  /* ── Stat cards ── */
+  .scards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .scard { background: var(--lavender100); border-radius: var(--radius); padding: 16px; border: 1px solid var(--lavender200); }
+  .scard-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--textMuted); margin-bottom: 8px; }
+  .scard-value { font-size: 22px; font-weight: 700; color: var(--purpleDeep); }
+  .scard-sub { font-size: 11px; font-weight: 500; color: var(--textTertiary); margin-top: 3px; }
+
+  /* ── Subheading ── */
+  .sub-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--textMuted); margin: 18px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--grey100); }
+  .sub-head:first-child { margin-top: 0; }
+
+  /* ── Nutrition grid ── */
+  .nutgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .nutitem { padding: 11px 0; border-bottom: 1px solid var(--grey100); }
+  .nutitem:nth-child(odd)  { padding-right: 24px; border-right: 1px solid var(--grey100); }
+  .nutitem:nth-child(even) { padding-left: 24px; }
+  .nutitem:nth-last-child(-n+2) { border-bottom: none; }
+  .nut-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--textMuted); margin-bottom: 4px; }
+  .nut-value { font-size: 14px; font-weight: 500; color: var(--textPrimary); }
+
+  /* ── Frequency rows ── */
+  .freq-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--grey100); }
+  .freq-row:last-child { border-bottom: none; }
+  .freq-name { font-size: 14px; font-weight: 500; color: var(--textPrimary); min-width: 160px; }
+  .freq-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: var(--radius); background: var(--lavender100); color: var(--purple200); border: 1px solid var(--lavender200); }
+  .freq-badge.fb-green { background: #f0faf0; color: #2c6e25; border-color: #a8dca2; }
+  .freq-badge.fb-amber { background: #fff5ec; color: #7a4010; border-color: #f5c99a; }
+
+  /* ── Activity cards ── */
+  .act-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .act-card { background: var(--lavender100); border-radius: var(--radius); padding: 16px; border: 1px solid var(--lavender200); }
+  .act-card-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--textMuted); margin-bottom: 8px; }
+  .act-card-value { font-size: 18px; font-weight: 700; color: var(--purpleDeep); }
+  .act-card-sub { font-size: 11px; font-weight: 500; color: var(--textTertiary); margin-top: 3px; }
+  .act-types { display: flex; flex-wrap: wrap; gap: 8px; }
+  /* ── Rec cards ── */
+  .rec-card { border: 1.5px solid var(--grey100); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 12px; }
+  .rec-card:last-child { margin-bottom: 0; }
+  .rec-top { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+  .rec-icon-wrap { color: var(--purple100); flex-shrink: 0; margin-top: 2px; }
+  .rec-title { font-size: 14px; font-weight: 700; color: var(--textPrimary); margin-bottom: 2px; }
+  .rec-meta { font-size: 11px; font-weight: 500; color: var(--textMuted); }
+  .rec-body { font-size: 13px; font-weight: 400; color: var(--textSecondary); line-height: 1.75; padding-left: 30px; }
+
+  /* ── Supplement rows ── */
+  .supp-row { display: flex; gap: 14px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid var(--grey100); }
+  .supp-row:last-child { border-bottom: none; }
+  .supp-icon-w { color: var(--purple100); flex-shrink: 0; margin-top: 2px; }
+  .supp-main { flex: 1; }
+  .supp-name { font-size: 14px; font-weight: 700; color: var(--textPrimary); margin-bottom: 3px; }
+  .supp-dose { font-size: 12px; font-weight: 600; color: var(--purple100); margin-bottom: 6px; }
+  .supp-desc { font-size: 12px; font-weight: 400; color: var(--textTertiary); line-height: 1.65; }
+  .supp-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 6px; }
+  .stag { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: var(--radius); background: var(--lavender100); color: var(--purple200); border: 1px solid var(--lavender200); text-transform: uppercase; letter-spacing: 0.05em; }
+  .supp-source { font-size: 12px; font-weight: 500; color: var(--textTertiary); line-height: 1.6; }
+  .supp-source strong { color: var(--textOnTint); }
+
+  /* ── Meal cards ── */
+  .meal-card { border: 1.5px solid var(--grey100); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; }
+  .meal-card:last-child { margin-bottom: 0; }
+  .meal-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--lavender100); border-bottom: 1px solid var(--lavender200); }
+  .meal-time { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--purple200); flex-shrink: 0; }
+  .meal-name { font-size: 14px; font-weight: 700; color: var(--purpleDeep); }
+  .meal-body { padding: 16px 18px; }
+  .meal-sl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--textMuted); margin-bottom: 5px; margin-top: 12px; }
+  .meal-sl:first-child { margin-top: 0; }
+  .meal-text { font-size: 13px; font-weight: 400; color: var(--textSecondary); line-height: 1.7; }
+  .meal-note { font-size: 12px; font-weight: 500; color: var(--textTertiary); margin-top: 6px; font-style: italic; line-height: 1.6; }
+
+  /* ── Disclaimer ── */
+  .disclaimer { border-left: 3px solid var(--lavender300); background: var(--lavender100); border-radius: 0 var(--radius) var(--radius) 0; padding: 14px 18px; margin-top: 16px; font-size: 12px; font-weight: 500; color: var(--textTertiary); line-height: 1.7; }
+  .disclaimer strong { color: var(--textOnTint); }
+
+  /* ── Share toast ── */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--purpleDeep); color: var(--white);
+    font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600;
+    padding: 12px 24px; border-radius: var(--radius);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    opacity: 0; transition: opacity 0.2s, transform 0.25s; pointer-events: none; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media print {
+    .action-bar { display: none; }
+    body { background: white; }
+    .wrap { padding: 20px; }
+    .module, .profile-card { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Action Buttons -->
+  <div class="action-bar">
+    <button class="btn-secondary" onclick="shareReport()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share
+    </button>
+    <button class="btn-primary" onclick="window.print()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Save as PDF
+    </button>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>My Report</h1>
+  </div>
+
+  <!-- PROFILE MODULE -->
+  <div class="profile-card">
+    <div class="profile-top">
+      <div class="avatar">
+        <!-- User icon -->
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div>
+        <div class="profile-name">My Profile</div>
+        <div class="profile-sub">Summary of all your responses · March 2026</div>
+      </div>
+    </div>
+    <div class="pgrid">
+      <div class="pstat">
+        <div class="pstat-label">Birth year</div>
+        <div class="pstat-value">1980 · Age 46</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-label">Height &amp; Weight</div>
+        <div class="pstat-value">5'6" · 155 lbs</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-label">Diet</div>
+        <div class="pstat-value">High-protein, Vegetarian</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-label">Allergies</div>
+        <div class="pstat-value">Gluten</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-label">Daily routine</div>
+        <div class="pstat-value">Mostly sitting</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-label">Exercise / week</div>
+        <div class="pstat-value">1–2 days + 3–4 strength</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-label">Drinks</div>
+        <div class="pstat-value">Water only</div>
+      </div>
+      <div class="pstat">
+        <div class="pstat-label">Email</div>
+        <div class="pstat-value" style="color:var(--textMuted)">Not provided</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. HORMONAL HEALTH — Calendar icon -->
+  <div class="module">
+    <div class="mod-header">
+      <svg class="mod-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="mod-title">Hormonal Health</span>
+    </div>
+    <div class="mod-divider"></div>
+    <div class="mod-body">
+      <div class="info-row">
+        <span class="ir-label">Last menstrual period</span>
+        <span class="ir-value">Less than 2 months</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-label">Last period date</span>
+        <span class="ir-value">3 / 5 / 2026</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-label">Taking HRT</span>
+        <span class="ir-value" style="color:var(--textMuted)">Not provided</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-label">HRT type</span>
+        <span class="ir-value">None of the above</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. HEALTH GOALS — Target icon -->
+  <div class="module">
+    <div class="mod-header">
+      <svg class="mod-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      <span class="mod-title">Health Goals</span>
+    </div>
+    <div class="mod-divider"></div>
+    <div class="mod-body">
+      <div class="tags">
+        <span class="tag">⚡ Increase energy</span>
+        <span class="tag">🧘 Manage stress</span>
+        <span class="tag">🧠 Improve memory &amp; thinking</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. SYMPTOMS — Heart icon -->
+  <div class="module">
+    <div class="mod-header">
+      <svg class="mod-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      <span class="mod-title">Symptoms</span>
+    </div>
+    <div class="mod-divider"></div>
+    <div class="mod-body">
+      <div class="sym-row">
+        <div class="sym-name">Fatigue</div>
+        <div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--rose);"></div></div>
+        <div class="sym-score">4/5 &nbsp;<span style="color:var(--rose);font-weight:700">High</span></div>
+      </div>
+      <div class="sym-row">
+        <div class="sym-name">Low energy</div>
+        <div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--amber);"></div></div>
+        <div class="sym-score">4/5 &nbsp;<span style="color:var(--amber);font-weight:700">High</span></div>
+      </div>
+      <div class="sym-row">
+        <div class="sym-name">Anxiety</div>
+        <div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--amber);"></div></div>
+        <div class="sym-score">3/5 &nbsp;<span style="color:var(--amber);font-weight:700">Moderate</span></div>
+      </div>
+      <div class="sym-row">
+        <div class="sym-name">Hair loss</div>
+        <div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--green);"></div></div>
+        <div class="sym-score">2/5 &nbsp;<span style="color:var(--green);font-weight:700">Mild</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. MOOD & SLEEP -->
+  <div class="module">
+    <div class="mod-header">
+      <svg class="mod-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <span class="mod-title">Mood &amp; Sleep</span>
+    </div>
+    <div class="mod-divider"></div>
+    <div class="mod-body">
+      <div class="scards">
+        <div class="scard">
+          <div class="scard-label">Average mood</div>
+          <div class="scard-value">Good</div>
+          <div class="scard-sub">Self-reported</div>
+        </div>
+        <div class="scard">
+          <div class="scard-label">Sleep quality</div>
+          <div class="scard-value">4 / 5</div>
+          <div class="scard-sub">Well rested</div>
+        </div>
+        <div class="scard">
+          <div class="scard-label">Currently active</div>
+          <div class="scard-value" style="font-size:17px;padding-top:3px;">Yes</div>
+          <div class="scard-sub">Tries to stay active</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. NUTRITION & FOOD FREQUENCY — Apple icon -->
+  <div class="module">
+    <div class="mod-header">
+      <svg class="mod-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4 4 0 0 0 18 6h-2a2 2 0 0 1-2-2 2 2 0 0 0-2-2 2 2 0 0 0-2 2 2 2 0 0 1-2 2H6a4 4 0 0 0-4 3.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c0 1.1.9 2 2 2"/></svg>
+      <span class="mod-title">Nutrition &amp; Food Frequency</span>
+    </div>
+    <div class="mod-divider"></div>
+    <div class="mod-body">
+      <div class="sub-head">Nutrition profile</div>
+      <div class="nutgrid">
+        <div class="nutitem">
+          <div class="nut-label">Diet</div>
+          <div class="nut-value">High-protein, Vegetarian</div>
+        </div>
+        <div class="nutitem">
+          <div class="nut-label">Allergies</div>
+          <div class="nut-value">Gluten</div>
+        </div>
+        <div class="nutitem">
+          <div class="nut-label">Daily fruit portions</div>
+          <div class="nut-value">2 portions</div>
+        </div>
+        <div class="nutitem">
+          <div class="nut-label">Daily veggie portions</div>
+          <div class="nut-value">3–4 portions</div>
+        </div>
+        <div class="nutitem">
+          <div class="nut-label">Drinks</div>
+          <div class="nut-value">Water only</div>
+        </div>
+        <div class="nutitem">
+          <div class="nut-label">Restaurants</div>
+          <div class="nut-value">Once a week</div>
+        </div>
+      </div>
+      <div class="sub-head">Weekly food frequency</div>
+      <div class="freq-row">
+        <span class="freq-name">Whole grains</span>
+        <span class="freq-badge fb-green">1+ times a day ✓</span>
+      </div>
+      <div class="freq-row">
+        <span class="freq-name">Nuts / seeds</span>
+        <span class="freq-badge fb-green">Every other day ✓</span>
+      </div>
+      <div class="freq-row">
+        <span class="freq-name">Sweets</span>
+        <span class="freq-badge">Once a week</span>
+      </div>
+      <div class="freq-row">
+        <span class="freq-name">Fried foods</span>
+        <span class="freq-badge">Every two weeks</span>
+      </div>
+      <div class="freq-row">
+        <span class="freq-name">Alcohol</span>
+        <span class="freq-badge">Every two weeks</span>
+      </div>
+      <div class="freq-row">
+        <span class="freq-name">Beans / legumes</span>
+        <span class="freq-badge fb-amber">Once a month — increase ↑</span>
+      </div>
+      <div class="freq-row">
+        <span class="freq-name">Fish</span>
+        <span class="freq-badge fb-amber">Never — algae omega-3 recommended</span>
+      </div>
+      <div class="freq-row">
+        <span class="freq-name">Red meat / chicken</span>
+        <span class="freq-badge fb-green">Not consumed ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. PHYSICAL ACTIVITY — Dumbbell icon -->
+  <div class="module">
+    <div class="mod-header">
+      <svg class="mod-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 12.768a2 2 0 1 1-2.829-2.829l1.768-1.767a2 2 0 1 1-2.828-2.829 2 2 0 1 1 2.828 2.829l1.767-1.768a2 2 0 1 1 2.829 2.829z"/></svg>
+      <span class="mod-title">Physical Activity</span>
+    </div>
+    <div class="mod-divider"></div>
+    <div class="mod-body">
+      <div class="act-cards">
+        <div class="act-card">
+          <div class="act-card-label">Currently active</div>
+          <div class="act-card-value">Yes</div>
+          <div class="act-card-sub">Tries to stay active</div>
+        </div>
+        <div class="act-card">
+          <div class="act-card-label">Exercise days / week</div>
+          <div class="act-card-value">1–2 days</div>
+          <div class="act-card-sub">General activity</div>
+        </div>
+        <div class="act-card">
+          <div class="act-card-label">Strength training</div>
+          <div class="act-card-value">3–4 days</div>
+          <div class="act-card-sub">Per week</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. PERSONALIZED RECOMMENDATIONS — Notes / clipboard icon -->
+  <div class="module">
+    <div class="mod-header">
+      <svg class="mod-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span class="mod-title">Personalized Recommendations</span>
+    </div>
+    <div class="mod-divider"></div>
+    <div class="mod-body">
+
+      <div class="rec-card">
+        <div class="rec-top">
+          <svg class="rec-icon-wrap" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <div>
+            <div class="rec-title">Boost energy &amp; reduce fatigue</div>
+            <div class="rec-meta">Addresses: Fatigue 4/5 · Low energy 4/5</div>
+          </div>
+        </div>
+        <div class="rec-body">Focus on antioxidants, omega-3 fatty acids, Vitamin D, and CoQ10 — all vital for cellular energy production. Since you're vegetarian and don't eat fish, use algae-based omega-3 supplements, fortified plant milks for Vitamin D, and flaxseeds, chia seeds, and walnuts for plant omega-3s. Soybeans and sesame seeds are good CoQ10 food sources. Your existing strength training is excellent — adding a daily 30-minute walk will amplify energy improvements further.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-top">
+          <svg class="rec-icon-wrap" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="12" r="10"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div>
+            <div class="rec-title">Stress &amp; anxiety management</div>
+            <div class="rec-meta">Addresses: Anxiety 3/5 · Memory &amp; thinking goal</div>
+          </div>
+        </div>
+        <div class="rec-body">Hormonal changes affect serotonin activity, lowering your stress threshold. Optimizing B vitamins, quality plant-based proteins, and omega-3s (EPA+DHA) supports both mood and cognitive function. Maintain a consistent sleep schedule — you're already at a healthy 4/5 sleep quality. Relaxation practices such as 10 minutes of deep breathing daily have measurable impacts on stress resilience. Balanced diet with vitamin and mineral supplements combined with regular exercise is the most effective combination.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-top">
+          <svg class="rec-icon-wrap" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
+          <div>
+            <div class="rec-title">Mediterranean eating pattern</div>
+            <div class="rec-meta">Supports all three health goals</div>
+          </div>
+        </div>
+        <div class="rec-body">The Mediterranean diet supports hormonal health, energy, and cognitive function. You're already eating whole grains daily and nuts every other day — excellent foundations. Key gaps: increase beans and legumes from once a month to 3–4 times per week, and increase fruit to 3+ portions daily. Since you have a gluten allergy, replace wheat with quinoa, brown rice, buckwheat, millet, or certified gluten-free oats. These provide equivalent fiber and nutrients. More plant-based foods will improve energy, regularity, and overall health.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-top">
+          <svg class="rec-icon-wrap" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          <div>
+            <div class="rec-title">Phytoestrogen &amp; hormonal support</div>
+            <div class="rec-meta">Addresses: Hormonal health · Hair loss</div>
+          </div>
+        </div>
+        <div class="rec-body">Phytoestrogen-rich foods support estrogen activity during hormonal transitions. Increase your intake of soy products (edamame, tofu, tempeh), flaxseeds, chickpeas, and lentils. These are naturally occurring plant compounds that can create mild estrogenic or anti-estrogenic effects. Flaxseeds and chia seeds also help support hormone metabolism. If you are concerned about genetic modification, choose organic or bio soy options.</div>
+      </div>
+
+      <div class="rec-card">
+        <div class="rec-top">
+          <svg class="rec-icon-wrap" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+          <div>
+            <div class="rec-title">Movement, strength &amp; outdoor time</div>
+            <div class="rec-meta">Addresses: Fatigue · Bone density · Vitamin D</div>
+          </div>
+        </div>
+        <div class="rec-body">Your 3–4 days of strength training is excellent — increasing lean body mass reduces the rate of aging and promotes overall health. Add a brisk daily 30–60 minute walk for cardiovascular health and improved sleep patterns. Since your routine is mostly sitting, take short movement breaks every 45–60 minutes. Walk outdoors during peak sun hours (10am–2pm) to support Vitamin D synthesis: spend 5–30 minutes with face, arms, and legs unprotected depending on your skin type and season.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 8. SUPPLEMENT PLAN -->
+  <div class="module">
+    <div class="mod-header">
+      <svg class="mod-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+      <span class="mod-title">Supplement Plan</span>
+    </div>
+    <div class="mod-divider"></div>
+    <div class="mod-body">
+
+      <div class="supp-row">
+        <svg class="supp-icon-w" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <div class="supp-main">
+          <div class="supp-name">Vitamin D3</div>
+          <div class="supp-dose">2,000 IU · 1 capsule per day</div>
+          <div class="supp-desc">Low Vitamin D can worsen anxiety and low mood. Take with a fat-containing meal to maximize absorption. Supplement with daily outdoor sun exposure: 5–30 minutes with face, arms, and legs unprotected.</div>
+          <div class="supp-tags"><span class="stag">Low mood</span><span class="stag">Anxiety</span></div>
+          <div class="supp-source"><strong>Vegetarian food sources:</strong> Fortified plant milks, egg yolks, maitake &amp; chanterelle mushrooms. Note: few plant foods are naturally rich in Vitamin D — sunlight is the primary source.</div>
+        </div>
+      </div>
+
+      <div class="supp-row">
+        <svg class="supp-icon-w" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <div class="supp-main">
+          <div class="supp-name">Omega-3 (EPA + DHA)</div>
+          <div class="supp-dose">2,000 mg · 2 tsp per day · Ideal ratio: 2:1 EPA to DHA</div>
+          <div class="supp-desc">Omega-3s reduce inflammation, support mood, and improve memory and cognitive function. Since you never eat fish, an algae-based omega-3 supplement is the recommended vegetarian source of EPA and DHA.</div>
+          <div class="supp-tags"><span class="stag">Low mood</span><span class="stag">Anxiety</span><span class="stag">Memory</span></div>
+          <div class="supp-source"><strong>Vegetarian food sources:</strong> Flaxseeds, chia seeds, hemp seeds, walnuts, canola oil — for plant ALA omega-3s. For EPA/DHA directly: algae-based supplement.</div>
+        </div>
+      </div>
+
+      <div class="supp-row">
+        <svg class="supp-icon-w" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/></svg>
+        <div class="supp-main">
+          <div class="supp-name">Selenium (Selenomethionine)</div>
+          <div class="supp-dose">200 mcg · 2 capsules per day</div>
+          <div class="supp-desc">Supports thyroid function, immune health, and cellular energy production. If you prefer a food-first approach, eat 3 Brazil nuts per day — this naturally covers your full daily selenium requirement without supplementation.</div>
+          <div class="supp-tags"><span class="stag">Fatigue</span></div>
+          <div class="supp-source"><strong>Vegetarian food sources:</strong> 3 Brazil nuts/day, eggs, shiitake mushrooms, parboiled rice, gluten-free oat bran, whole-grain alternatives.</div>
+        </div>
+      </div>
+
+      <div class="supp-row">
+        <svg class="supp-icon-w" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <div class="supp-main">
+          <div class="supp-name">CoQ10 (Coenzyme Q10 / Ubiquinone)</div>
+          <div class="supp-dose">150 mg · 2 capsules per day</div>
+          <div class="supp-desc">A naturally occurring compound found in every cell, crucial for energy production. Also a potent antioxidant that protects cells from free radical damage. CoQ10 levels naturally decline with age, making supplementation especially beneficial for midlife energy.</div>
+          <div class="supp-tags"><span class="stag">Fatigue</span><span class="stag">Energy</span></div>
+          <div class="supp-source"><strong>Vegetarian food sources:</strong> Soybeans, sesame seeds, spinach, broccoli, cauliflower, nuts, whole grains.</div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        Take Vitamin D3, Omega-3, and CoQ10 with a meal containing healthy fats (such as olive oil, avocado, or nuts) to maximize absorption.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 9. MEAL PLAN -->
+  <div class="module">
+    <div class="mod-header">
+      <svg class="mod-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg>
+      <span class="mod-title">Meal Plan</span>
+    </div>
+    <div class="mod-divider"></div>
+    <div class="mod-body">
+
+      <div class="meal-card">
+        <div class="meal-head">
+          <span class="meal-time">Breakfast</span>
+          <span class="meal-name">Greek Yogurt Bowl with Fresh Fruit &amp; Nuts</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-sl">Ingredients</div>
+          <div class="meal-text">1 cup plain Greek yogurt · ½ cup mixed fresh berries · 2 tbsp mixed nuts · 1 tbsp honey (optional)</div>
+          <div class="meal-sl">Instructions</div>
+          <div class="meal-text">Place yogurt in a bowl, top with berries and nuts, drizzle with honey if desired. Rich in calcium, protein, and antioxidants to kickstart the day.</div>
+          <div class="meal-sl">Gluten-free substitute</div>
+          <div class="meal-note">If dairy triggers discomfort or hot flashes, replace Greek yogurt with a plant-based Greek-style yogurt (no added sugar) or 2 scrambled eggs.</div>
+        </div>
+      </div>
+
+      <div class="meal-card">
+        <div class="meal-head">
+          <span class="meal-time">Lunch</span>
+          <span class="meal-name">Mediterranean Quinoa Salad</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-sl">Ingredients</div>
+          <div class="meal-text">1 cup cooked quinoa · ½ cup chickpeas · ¼ cup cherry tomatoes (halved) · ½ cucumber (diced) · ¼ cup red onion (chopped) · ¼ cup Kalamata olives (sliced) · ¼ cup feta cheese (crumbled) · 2 tbsp olive oil · 1 tbsp lemon juice · salt, pepper, fresh herbs</div>
+          <div class="meal-sl">Instructions</div>
+          <div class="meal-text">Combine quinoa, vegetables, olives, and feta in a bowl. Whisk olive oil, lemon juice, salt, and pepper together, then toss with the salad. Garnish with fresh herbs.</div>
+          <div class="meal-sl">Protein &amp; phytoestrogen boost</div>
+          <div class="meal-note">Add 50g bio tofu, edamame, or textured soy to increase protein and support estrogen activity. Customize vegetables to taste.</div>
+        </div>
+      </div>
+
+      <div class="meal-card">
+        <div class="meal-head">
+          <span class="meal-time">Dinner</span>
+          <span class="meal-name">Herb-Baked Tofu with Roasted Vegetables &amp; Broccoli</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-sl">Ingredients</div>
+          <div class="meal-text">1 block firm tofu (pressed and sliced) · 1 cup assorted vegetables (bell peppers, zucchini, cherry tomatoes, potatoes) · 1 cup broccoli florets · 2 tbsp olive oil · 1 tsp dried oregano · lemon slices · salt and pepper</div>
+          <div class="meal-sl">Instructions</div>
+          <div class="meal-text">Preheat oven to 400°F. Place tofu and vegetables on a baking sheet, drizzle with olive oil, season with oregano, salt, and pepper. Top tofu with lemon slices and bake 20–25 minutes until golden and vegetables are tender. Steam broccoli and serve alongside.</div>
+          <div class="meal-sl">Omega-3 enhancement</div>
+          <div class="meal-note">Drizzle 1 tsp flaxseed oil or algae oil over the finished dish for a plant-based omega-3 boost — especially important since fish is not part of your diet. Algae sources provide EPA and DHA directly, just like fish.</div>
+        </div>
+      </div>
+
+      <div class="meal-card">
+        <div class="meal-head">
+          <span class="meal-time">Snacks</span>
+          <span class="meal-name">Nuts, Seeds &amp; Omega-3 Options</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-sl">Options</div>
+          <div class="meal-text">A handful of walnuts · Chia pudding (2 tbsp chia seeds soaked overnight in plant milk, topped with berries) · Gluten-free flaxseed crackers with hummus · Shelled edamame · Mixed seeds with dried fruit</div>
+          <div class="meal-sl">Why these work for you</div>
+          <div class="meal-note">You're already eating nuts every other day — keep it up. These snacks add omega-3s, phytoestrogens, and fiber without gluten or animal products. Chia and flax provide ALA omega-3s that also support hormone metabolism.</div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <strong>Note:</strong> This is a sample one-day Mediterranean meal plan adapted for your gluten-free, high-protein vegetarian diet. Recipes and portions can be adjusted to your taste and caloric needs. For a personalized multi-week plan, consult a registered dietitian.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Final Disclaimer -->
+  <div class="disclaimer">
+    <strong>Important:</strong> This health report is based on your self-reported survey responses and general wellness guidelines. It is intended for informational purposes only and does not constitute medical advice. Always consult your healthcare provider or a registered dietitian before making significant dietary changes or starting new supplements.
+  </div>
+
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">Link copied to clipboard</div>
+
+<script>
+function shareReport() {
+  if (navigator.clipboard && navigator.share === undefined) {
+    navigator.clipboard.writeText(window.location.href).then(function() {
+      showToast('Link copied to clipboard');
+    }).catch(function() {
+      showToast('Link ready to share');
+    });
+  } else if (navigator.share) {
+    navigator.share({ title: 'My Health Report', url: window.location.href });
+  } else {
+    showToast('Link ready to share');
+  }
+}
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+</script>
+</body>
+</html>
