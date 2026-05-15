@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health Report — Light vs Dark Glass comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-100: #D3D0DC;
+    --brand-300: #A6A1BA;
+    --brand-500: #7A7397;
+    --brand-700: #4E4475;
+    --brand-900: #231556;
+    --brand-950: #1A0F44;
+    --canvas: #F7F8FA;
+    --surface: #FFFFFF;
+    --surface-subtle: #EDEEF3;
+    --text-primary: #231556;
+    --text-body: #4F5470;
+    --text-muted: #7A7397;
+    --text-subtle: #A6A1BA;
+    --border-default: #DDDFE8;
+    --border-subtle: #EDEEF3;
+    --gold-surface: #F1ECDD;
+    --gold-border: #A99B70;
+    --gold-text: #6B5D34;
+    --success-surface: #E2EFEC;
+    --success-border: #A8CFC8;
+    --success-text: #2F5A55;
+    --warning-surface: #F6EBE2;
+    --warning-border: #E2BFA7;
+    --warning-text: #7A4F38;
+    --error-surface: #F4E2E3;
+    --error-border: #E1BBBD;
+    --error-text: #8E4B50;
+    --info-surface: #E1EBF2;
+    --info-border: #97C0D6;
+    --info-text: #2A5871;
+    --shadow-1: 0 1px 2px rgba(35,21,86,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #E8E9ED;
+    color: var(--text-body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    padding: 32px 16px;
+  }
+
+  /* Comparison layout — 3 columns, horizontal scroll on narrow viewports */
+  .compare {
+    display: flex;
+    gap: 24px;
+    padding: 0 24px 24px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: center;
+  }
+  @media (max-width: 1380px) {
+    .compare { justify-content: flex-start; }
+  }
+  .compare-side {
+    flex: 0 0 430px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .compare-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Phone frame (light) */
+  .device {
+    width: 100%;
+    max-width: 430px;
+    background: var(--canvas);
+    border-radius: 36px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.10);
+    border: 8px solid #1A1A1A;
+    overflow: hidden;
+    height: min(960px, calc(100vh - 96px));
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Top app bar */
+  .topbar {
+    background: var(--surface);
+    padding: 14px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .icon-btn {
+    width: 44px; height: 44px;
+    border: none; background: transparent;
+    cursor: pointer; display: inline-flex;
+    align-items: center; justify-content: center;
+    color: var(--text-primary);
+    border-radius: 50%;
+    transition: background 0.15s ease;
+  }
+  .icon-btn:hover { background: var(--surface-subtle); }
+  .icon-btn svg { width: 22px; height: 22px; }
+  .topbar-title {
+    flex: 1;
+    font-size: 22px; font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    letter-spacing: -0.3px;
+  }
+  .topbar-spacer { width: 44px; }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px 32px;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-overline {
+    font-size: 13px; font-weight: 700;
+    color: var(--brand-900);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-left: 16px;
+    margin: 32px 0 14px;
+  }
+  .section-overline .count {
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .section-overline:first-child { margin-top: 0; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    box-shadow: var(--shadow-1);
+    margin-bottom: 10px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .card.open .card-header { border-bottom: 1px solid var(--border-subtle); }
+  .grip { color: var(--text-subtle); cursor: grab; flex-shrink: 0; display: flex; align-items: center; }
+  .grip svg { width: 16px; height: 16px; }
+  .card-title {
+    flex: 1;
+    font-size: 15px; font-weight: 600;
+    color: var(--brand-900);
+    line-height: 1.3;
+  }
+  .ctrl {
+    background: none; border: none; padding: 6px;
+    cursor: pointer; color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ctrl svg { width: 18px; height: 18px; }
+
+  .card-body { padding: 14px 16px; }
+  .card-heading-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+  .card-heading {
+    font-size: 20px; font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.25; letter-spacing: -0.2px;
+  }
+  .card-subheading {
+    font-size: 15px; font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.35;
+  }
+  .card-description {
+    font-size: 15px;
+    color: var(--text-body);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .card-tertiary {
+    background: none; border: none; padding: 4px 0;
+    font-size: 15px; font-weight: 500;
+    color: var(--brand-900);
+    cursor: pointer;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px; font-weight: 500;
+    line-height: 1; padding: 6px 12px;
+    border-radius: 9999px;
+    border: 1px solid;
+    height: 26px; box-sizing: border-box;
+    white-space: nowrap;
+  }
+  .pill-symptom { background: var(--gold-surface); color: var(--gold-text); border-color: var(--gold-border); }
+  .pill-mild { background: var(--success-surface); color: var(--success-text); border-color: var(--success-border); }
+  .pill-moderate { background: var(--warning-surface); color: var(--warning-text); border-color: var(--warning-border); }
+  .pill-severe { background: var(--error-surface); color: var(--error-text); border-color: var(--error-border); }
+  .pill-info { background: var(--info-surface); color: var(--info-text); border-color: var(--info-border); }
+  .pill-neutral { background: var(--surface-subtle); color: var(--text-primary); border-color: var(--border-default); }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--surface-subtle);
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+  .progress-bar-fill { height: 100%; border-radius: 9999px; }
+  .progress-mild { background: var(--success-border); width: 30%; }
+  .progress-moderate { background: var(--warning-border); width: 60%; }
+  .progress-severe { background: var(--error-border); width: 95%; }
+
+  .id-avatar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .id-avatar {
+    width: 96px; height: 96px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand-900), var(--brand-700));
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; font-weight: 700;
+  }
+  .id-name {
+    font-size: 20px; font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.25; letter-spacing: -0.2px;
+  }
+
+  .summary-grid { display: grid; gap: 10px; }
+  .summary-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .summary-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .summary-cell {
+    background: var(--surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 14px 12px;
+    box-shadow: var(--shadow-1);
+    display: flex;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    gap: 6px;
+  }
+  .summary-cell .top-cap {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .summary-cell .value {
+    font-size: 22px; font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.0; font-variant-numeric: tabular-nums;
+  }
+  .summary-cell .bottom-cap {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.2px;
+  }
+  .summary-cell.kv {
+    align-items: flex-start;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 14px;
+    gap: 8px;
+  }
+  .summary-cell.kv .label {
+    font-size: 12px; font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+  }
+  .summary-cell.kv .value {
+    font-size: 15px; font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+  .summary-cell.with-icon { gap: 8px; }
+  .summary-cell.with-icon .icon { width: 24px; height: 24px; color: var(--brand-900); }
+  .summary-cell.with-icon .label {
+    font-size: 15px; font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.25;
+  }
+
+  .kv-row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-subtle);
+    align-items: start;
+  }
+  .kv-row:last-child { border-bottom: none; }
+  .kv-row .key {
+    font-size: 15px; font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.45;
+  }
+  .kv-row .val {
+    font-size: 15px;
+    color: var(--text-body);
+    line-height: 1.45;
+  }
+
+  .sev-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 100px;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .sev-row:last-child { border-bottom: none; }
+  .sev-row .label {
+    font-size: 15px; font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .goals-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .goal-pill {
+    display: inline-flex;
+    align-items: center;
+    background: var(--gold-surface);
+    color: var(--gold-text);
+    border: 1px solid var(--gold-border);
+    font-size: 13px; font-weight: 500;
+    padding: 7px 12px;
+    border-radius: 9999px;
+    line-height: 1;
+  }
+
+  /* ─── DARK canvas with brand gradient + orbs ─── */
+  .device.dark {
+    background: radial-gradient(at 80% -10%, #4E4475 0%, transparent 50%),
+                radial-gradient(at 10% 100%, #2A5871 0%, transparent 45%),
+                linear-gradient(160deg, #231556 0%, #0A0518 100%);
+    border-color: #0A0518;
+  }
+  .device.dark::before {
+    content: '';
+    position: absolute;
+    top: 60px; right: -80px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(225, 187, 189, 0.55) 0%, transparent 70%);
+    filter: blur(80px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .device.dark::after {
+    content: '';
+    position: absolute;
+    bottom: 80px; left: -100px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(151, 192, 214, 0.45) 0%, transparent 70%);
+    filter: blur(90px);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ─── TINTED — light canvas with brand-purple + soft gold accent (current light cards, dark text retained) ─── */
+  .device.tinted {
+    background: radial-gradient(at 85% -5%, rgba(35, 21, 86, 0.18) 0%, transparent 55%),
+                radial-gradient(at 5% 100%, rgba(169, 155, 112, 0.16) 0%, transparent 55%),
+                linear-gradient(160deg, #F0EDF5 0%, #F1ECEC 100%);
+  }
+  .device.tinted::before {
+    /* soft gold accent orb — top right */
+    content: '';
+    position: absolute;
+    top: 60px; right: -60px;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(235, 228, 215, 0.65) 0%, rgba(169, 155, 112, 0.16) 40%, transparent 70%);
+    filter: blur(60px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .device.tinted::after {
+    /* brand-purple orb — bottom left */
+    content: '';
+    position: absolute;
+    bottom: 100px; left: -100px;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(211, 208, 220, 0.85) 0%, rgba(78, 68, 117, 0.18) 50%, transparent 70%);
+    filter: blur(70px);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .device.tinted .topbar,
+  .device.tinted .content { position: relative; z-index: 1; }
+  .device.tinted .topbar {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  /* All text + pills inside frosted cards keep their original light-mode colors —
+     no further overrides needed (text-primary, text-body, text-muted, brand-900, pill variants all unchanged) */
+
+  .device.dark .topbar {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative; z-index: 5;
+  }
+  .device.dark .icon-btn { color: white; }
+  .device.dark .icon-btn:hover { background: rgba(255, 255, 255, 0.08); }
+  .device.dark .topbar-title { color: white; }
+
+  .device.dark .content { background: transparent; position: relative; z-index: 1; }
+
+  /* Section overline in white */
+  .device.dark .section-overline { color: white; }
+  .device.dark .section-overline .count { color: rgba(255, 255, 255, 0.55); }
+
+  /* Glass cards */
+  .device.dark .card {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(24px) saturate(1.1);
+    -webkit-backdrop-filter: blur(24px) saturate(1.1);
+  }
+  .device.dark .card.open .card-header { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+  .device.dark .grip { color: rgba(255, 255, 255, 0.4); }
+  .device.dark .card-title { color: rgba(255, 255, 255, 0.95); }
+  .device.dark .ctrl { color: rgba(255, 255, 255, 0.6); }
+
+  .device.dark .card-heading { color: white; }
+  .device.dark .card-subheading { color: rgba(255, 255, 255, 0.92); }
+  .device.dark .card-description { color: rgba(255, 255, 255, 0.75); }
+  .device.dark .card-tertiary { color: rgba(255, 255, 255, 0.95); }
+
+  /* Glass inner cells */
+  .device.dark .summary-cell {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  .device.dark .summary-cell .value { color: white; }
+  .device.dark .summary-cell .top-cap { color: rgba(255, 255, 255, 0.6); }
+  .device.dark .summary-cell .bottom-cap { color: rgba(255, 255, 255, 0.7); }
+  .device.dark .summary-cell.with-icon .icon { color: rgba(255, 255, 255, 0.85); }
+  .device.dark .summary-cell.with-icon .label { color: white; }
+  .device.dark .summary-cell.kv .label { color: rgba(255, 255, 255, 0.6); }
+  .device.dark .summary-cell.kv .value { color: white; }
+
+  /* KV rows */
+  .device.dark .kv-row {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  .device.dark .kv-row .key { color: white; }
+  .device.dark .kv-row .val { color: rgba(255, 255, 255, 0.75); }
+
+  /* Severity rows */
+  .device.dark .sev-row {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  .device.dark .sev-row .label { color: white; }
+  .device.dark .progress-bar { background: rgba(255, 255, 255, 0.10); }
+
+  /* Pills — keep their brand-tinted color identity but soften */
+  .device.dark .pill {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* ID avatar — keep gradient */
+  .device.dark .id-name { color: white; }
+
+  /* Goals pills — translucent gold */
+  .device.dark .goal-pill {
+    background: rgba(241, 236, 221, 0.18);
+    color: rgba(255, 238, 200, 0.95);
+    border-color: rgba(169, 155, 112, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .bottom-spacer { height: 24px; }
+
+  /* Light variant doc-header style */
+  .doc-intro {
+    max-width: 960px;
+    margin: 0 auto 24px;
+    text-align: center;
+  }
+  .doc-intro h1 {
+    font-size: 28px; font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.20; letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .doc-intro p {
+    font-size: 15px;
+    color: var(--text-body);
+    line-height: 1.55;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-intro">
+  <h1>Health Report — Light vs Dark Glass</h1>
+  <p>Same content, two themes. Right side uses a deep brand-tinted gradient background, glass-morphic translucent cards (frosted backdrop blur), and white section overlines + headings.</p>
+</div>
+
+<div class="compare">
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- LEFT: Current light-mode Health Report -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="compare-side">
+    <div class="compare-label">Current · Light</div>
+    <div class="device">
+      <div class="topbar">
+        <button class="icon-btn" aria-label="menu"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="back"><svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="topbar-title">Health Report</div>
+        <div class="topbar-spacer"></div>
+      </div>
+      <div class="content">
+
+        <!-- Profile -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Profile</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="id-avatar-wrap">
+              <div class="id-avatar">D</div>
+              <div class="id-name">Daiana</div>
+            </div>
+            <div class="summary-grid cols-2">
+              <div class="summary-cell"><div class="top-cap">Born</div><div class="value">1984</div><div class="bottom-cap">birth year</div></div>
+              <div class="summary-cell"><div class="top-cap">Now</div><div class="value">42</div><div class="bottom-cap">age</div></div>
+              <div class="summary-cell"><div class="top-cap">5'6"</div><div class="value">168</div><div class="bottom-cap">height (cm)</div></div>
+              <div class="summary-cell"><div class="top-cap">145 lbs</div><div class="value">66</div><div class="bottom-cap">weight (kg)</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hormonal Health -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Hormonal Health</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="kv-row"><span class="key">Stage</span><span class="val">Premenopause</span></div>
+            <div class="kv-row"><span class="key">Cycle length</span><span class="val">28 days</span></div>
+            <div class="kv-row"><span class="key">Current phase</span><span class="val">Luteal · day 21</span></div>
+            <div class="kv-row"><span class="key">Last period</span><span class="val">May 2, 2026</span></div>
+          </div>
+        </div>
+
+        <!-- Health Goals -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Health Goals</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="goals-pills">
+              <span class="goal-pill">Reduce hot flashes</span>
+              <span class="goal-pill">Better sleep</span>
+              <span class="goal-pill">Daily movement</span>
+              <span class="goal-pill">Stress relief</span>
+              <span class="goal-pill">Mindful eating</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Symptoms</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="sev-row"><span class="label">Hot flashes</span><div class="progress-bar"><div class="progress-bar-fill progress-severe"></div></div><span class="pill pill-severe">Severe</span></div>
+            <div class="sev-row"><span class="label">Sleep disruption</span><div class="progress-bar"><div class="progress-bar-fill progress-moderate"></div></div><span class="pill pill-moderate">Moderate</span></div>
+            <div class="sev-row"><span class="label">Brain fog</span><div class="progress-bar"><div class="progress-bar-fill progress-mild"></div></div><span class="pill pill-mild">Mild</span></div>
+          </div>
+        </div>
+
+        <!-- Mood & Sleep -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Mood &amp; Sleep</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="summary-grid cols-2">
+              <div class="summary-cell with-icon">
+                <svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M8 15c1.333 1 2.667 1.5 4 1.5s2.667-0.5 4-1.5M9 9h.01M15 9h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="label">Mood</div>
+                <div class="bottom-cap">Good · last 7 days</div>
+              </div>
+              <div class="summary-cell with-icon">
+                <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                <div class="label">Sleep</div>
+                <div class="bottom-cap">6.2h avg · steady</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nutrition Profile -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Nutrition Profile</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="summary-grid cols-2">
+              <div class="summary-cell kv"><div class="label">Diet</div><div class="value">No special diet</div></div>
+              <div class="summary-cell kv"><div class="label">Allergies</div><div class="value">None</div></div>
+              <div class="summary-cell kv"><div class="label">Fruit / day</div><div class="value">2</div></div>
+              <div class="summary-cell kv"><div class="label">Veg / day</div><div class="value">2</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Recommendations -->
+        <div class="section-overline">Personalized Recommendations <span class="count">· 1</span></div>
+
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">PMS</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="card-heading-group">
+              <div class="card-heading">Cycle support plan</div>
+              <div class="card-subheading">Track triggers across 3 cycles</div>
+            </div>
+            <div class="card-description">Log symptoms 3–5 days before your period. Focus on magnesium-rich foods, hydration, and gentle movement during this window.</div>
+            <div class="card-tags">
+              <span class="pill pill-mild">Active</span>
+              <span class="pill pill-info">Cyclical</span>
+            </div>
+            <button class="card-tertiary">View details →</button>
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MIDDLE: Light canvas + soft PhenomX-tinted gradient (current cards, dark text) -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="compare-side">
+    <div class="compare-label">Explore · Tinted</div>
+    <div class="device tinted">
+      <div class="topbar">
+        <button class="icon-btn" aria-label="menu"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="back"><svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="topbar-title">Health Report</div>
+        <div class="topbar-spacer"></div>
+      </div>
+      <div class="content">
+
+        <!-- Profile -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Profile</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="id-avatar-wrap">
+              <div class="id-avatar">D</div>
+              <div class="id-name">Daiana</div>
+            </div>
+            <div class="summary-grid cols-2">
+              <div class="summary-cell"><div class="top-cap">Born</div><div class="value">1984</div><div class="bottom-cap">birth year</div></div>
+              <div class="summary-cell"><div class="top-cap">Now</div><div class="value">42</div><div class="bottom-cap">age</div></div>
+              <div class="summary-cell"><div class="top-cap">5'6"</div><div class="value">168</div><div class="bottom-cap">height (cm)</div></div>
+              <div class="summary-cell"><div class="top-cap">145 lbs</div><div class="value">66</div><div class="bottom-cap">weight (kg)</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hormonal Health -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Hormonal Health</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="kv-row"><span class="key">Stage</span><span class="val">Premenopause</span></div>
+            <div class="kv-row"><span class="key">Cycle length</span><span class="val">28 days</span></div>
+            <div class="kv-row"><span class="key">Current phase</span><span class="val">Luteal · day 21</span></div>
+            <div class="kv-row"><span class="key">Last period</span><span class="val">May 2, 2026</span></div>
+          </div>
+        </div>
+
+        <!-- Health Goals -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Health Goals</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="goals-pills">
+              <span class="goal-pill">Reduce hot flashes</span>
+              <span class="goal-pill">Better sleep</span>
+              <span class="goal-pill">Daily movement</span>
+              <span class="goal-pill">Stress relief</span>
+              <span class="goal-pill">Mindful eating</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Symptoms</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="sev-row"><span class="label">Hot flashes</span><div class="progress-bar"><div class="progress-bar-fill progress-severe"></div></div><span class="pill pill-severe">Severe</span></div>
+            <div class="sev-row"><span class="label">Sleep disruption</span><div class="progress-bar"><div class="progress-bar-fill progress-moderate"></div></div><span class="pill pill-moderate">Moderate</span></div>
+            <div class="sev-row"><span class="label">Brain fog</span><div class="progress-bar"><div class="progress-bar-fill progress-mild"></div></div><span class="pill pill-mild">Mild</span></div>
+          </div>
+        </div>
+
+        <!-- Mood & Sleep -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Mood &amp; Sleep</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="summary-grid cols-2">
+              <div class="summary-cell with-icon">
+                <svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M8 15c1.333 1 2.667 1.5 4 1.5s2.667-0.5 4-1.5M9 9h.01M15 9h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="label">Mood</div>
+                <div class="bottom-cap">Good · last 7 days</div>
+              </div>
+              <div class="summary-cell with-icon">
+                <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                <div class="label">Sleep</div>
+                <div class="bottom-cap">6.2h avg · steady</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nutrition Profile -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Nutrition Profile</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="summary-grid cols-2">
+              <div class="summary-cell kv"><div class="label">Diet</div><div class="value">No special diet</div></div>
+              <div class="summary-cell kv"><div class="label">Allergies</div><div class="value">None</div></div>
+              <div class="summary-cell kv"><div class="label">Fruit / day</div><div class="value">2</div></div>
+              <div class="summary-cell kv"><div class="label">Veg / day</div><div class="value">2</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Recommendations -->
+        <div class="section-overline">Personalized Recommendations <span class="count">· 1</span></div>
+
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">PMS</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="card-heading-group">
+              <div class="card-heading">Cycle support plan</div>
+              <div class="card-subheading">Track triggers across 3 cycles</div>
+            </div>
+            <div class="card-description">Log symptoms 3–5 days before your period. Focus on magnesium-rich foods, hydration, and gentle movement during this window.</div>
+            <div class="card-tags">
+              <span class="pill pill-mild">Active</span>
+              <span class="pill pill-info">Cyclical</span>
+            </div>
+            <button class="card-tertiary">View details →</button>
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- THIRD: Dark glass version (same content) -->
+  <!-- ═══════════════════════════════════════════ -->
+  <div class="compare-side">
+    <div class="compare-label">Explore · Dark + Glass</div>
+    <div class="device dark">
+      <div class="topbar">
+        <button class="icon-btn" aria-label="menu"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+        <button class="icon-btn" aria-label="back"><svg viewBox="0 0 24 24" fill="none"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="topbar-title">Health Report</div>
+        <div class="topbar-spacer"></div>
+      </div>
+      <div class="content">
+
+        <!-- Profile -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Profile</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="id-avatar-wrap">
+              <div class="id-avatar">D</div>
+              <div class="id-name">Daiana</div>
+            </div>
+            <div class="summary-grid cols-2">
+              <div class="summary-cell"><div class="top-cap">Born</div><div class="value">1984</div><div class="bottom-cap">birth year</div></div>
+              <div class="summary-cell"><div class="top-cap">Now</div><div class="value">42</div><div class="bottom-cap">age</div></div>
+              <div class="summary-cell"><div class="top-cap">5'6"</div><div class="value">168</div><div class="bottom-cap">height (cm)</div></div>
+              <div class="summary-cell"><div class="top-cap">145 lbs</div><div class="value">66</div><div class="bottom-cap">weight (kg)</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hormonal Health -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Hormonal Health</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="kv-row"><span class="key">Stage</span><span class="val">Premenopause</span></div>
+            <div class="kv-row"><span class="key">Cycle length</span><span class="val">28 days</span></div>
+            <div class="kv-row"><span class="key">Current phase</span><span class="val">Luteal · day 21</span></div>
+            <div class="kv-row"><span class="key">Last period</span><span class="val">May 2, 2026</span></div>
+          </div>
+        </div>
+
+        <!-- Health Goals -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Health Goals</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="goals-pills">
+              <span class="goal-pill">Reduce hot flashes</span>
+              <span class="goal-pill">Better sleep</span>
+              <span class="goal-pill">Daily movement</span>
+              <span class="goal-pill">Stress relief</span>
+              <span class="goal-pill">Mindful eating</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Symptoms</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="sev-row"><span class="label">Hot flashes</span><div class="progress-bar"><div class="progress-bar-fill progress-severe"></div></div><span class="pill pill-severe">Severe</span></div>
+            <div class="sev-row"><span class="label">Sleep disruption</span><div class="progress-bar"><div class="progress-bar-fill progress-moderate"></div></div><span class="pill pill-moderate">Moderate</span></div>
+            <div class="sev-row"><span class="label">Brain fog</span><div class="progress-bar"><div class="progress-bar-fill progress-mild"></div></div><span class="pill pill-mild">Mild</span></div>
+          </div>
+        </div>
+
+        <!-- Mood & Sleep -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Mood &amp; Sleep</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="summary-grid cols-2">
+              <div class="summary-cell with-icon">
+                <svg class="icon" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M8 15c1.333 1 2.667 1.5 4 1.5s2.667-0.5 4-1.5M9 9h.01M15 9h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div class="label">Mood</div>
+                <div class="bottom-cap">Good · last 7 days</div>
+              </div>
+              <div class="summary-cell with-icon">
+                <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                <div class="label">Sleep</div>
+                <div class="bottom-cap">6.2h avg · steady</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nutrition Profile -->
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">Nutrition Profile</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="summary-grid cols-2">
+              <div class="summary-cell kv"><div class="label">Diet</div><div class="value">No special diet</div></div>
+              <div class="summary-cell kv"><div class="label">Allergies</div><div class="value">None</div></div>
+              <div class="summary-cell kv"><div class="label">Fruit / day</div><div class="value">2</div></div>
+              <div class="summary-cell kv"><div class="label">Veg / day</div><div class="value">2</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Recommendations -->
+        <div class="section-overline">Personalized Recommendations <span class="count">· 1</span></div>
+
+        <div class="card open">
+          <div class="card-header">
+            <span class="grip"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="6" r="1.5" fill="currentColor"/><circle cx="9" cy="12" r="1.5" fill="currentColor"/><circle cx="9" cy="18" r="1.5" fill="currentColor"/><circle cx="15" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="15" cy="18" r="1.5" fill="currentColor"/></svg></span>
+            <div class="card-title">PMS</div>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <button class="ctrl"><svg viewBox="0 0 24 24" fill="none"><path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+          </div>
+          <div class="card-body">
+            <div class="card-heading-group">
+              <div class="card-heading">Cycle support plan</div>
+              <div class="card-subheading">Track triggers across 3 cycles</div>
+            </div>
+            <div class="card-description">Log symptoms 3–5 days before your period. Focus on magnesium-rich foods, hydration, and gentle movement during this window.</div>
+            <div class="card-tags">
+              <span class="pill pill-mild">Active</span>
+              <span class="pill pill-info">Cyclical</span>
+            </div>
+            <button class="card-tertiary">View details →</button>
+          </div>
+        </div>
+
+        <div class="bottom-spacer"></div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+</body>
+</html>
